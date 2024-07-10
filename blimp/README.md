@@ -24,3 +24,7 @@ For further info on this ESC, check out `docs/BLHeli Instruction.pdf`.
 
 With some confidence in basic wiring and functional checks of my components, I can move to
 controlling the motor via my ESP32.
+
+## Battery
+
+This one looks okay: https://hobbystation.co.nz/1-18-roc-lipo-battery-2s-380mah-same-as-fmsc2052-1/
