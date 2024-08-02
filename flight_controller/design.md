@@ -20,13 +20,13 @@ Wiring [here](https://mschoeffler.com/2017/10/05/tutorial-how-to-use-the-gy-521-
 ### LiPo battery
 2S battery, for small size and working with ESC. Comes with charger.
 
-AliExpress page [here](https://www.aliexpress.com/item/1005004679606328.html?spm=a2g0o.productlist.main.15.327648ea2N7kHm&algo_pvid=b5076444-1244-4b6b-ae24-48472cec0828&aem_p4p_detail=202407311701172187884969025560000185852&utparam-url=scene%3Asearch%7Cquery_from%3A&search_p4p_id=202407311701172187884969025560000185852_2)
+HobbyStation page [here](https://hobbystation.co.nz/1-18-roc-lipo-battery-2s-380mah-same-as-fmsc2052-1/)
 
 ### Motors
 Two brushed motors for differential thrust.
 
 ### Step down voltage regulator
-For converting the LiPo battery down from 7.4V to 3.3V for powering the micro.
+For converting the LiPo battery down from 7.4V to 5V for powering the micro.
 
 AliExpress page [here](https://www.aliexpress.com/item/1005006244142432.html?spm=a2g0o.productlist.main.25.7eaf5e59tcTZa9&algo_pvid=f6b7edaa-460c-43ce-9464-9f9ba717c609&aem_p4p_detail=202407311703099489957027803350000186218&utparam-url=scene%3Asearch%7Cquery_from%3A&search_p4p_id=202407311703099489957027803350000186218_8)
 
@@ -36,6 +36,8 @@ Datasheet for IC in above found [here](https://www.diodes.com/assets/Datasheets/
 Two 3.7g servos for center of mass control system.
 
 AliExpress page [here](https://www.aliexpress.com/item/1005003137751361.html?spm=a2g0o.order_list.order_list_main.13.21ef1802dHYc6I)
+
+How to use in arduino [here](https://www.youtube.com/watch?v=SfmHNb5QAzc)
 
 Some conflicting info here, should be able to run off of micro's PWM digital pin.
 

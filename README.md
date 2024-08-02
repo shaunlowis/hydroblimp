@@ -1,6 +1,21 @@
 # hydroblimp
 Making a hydrogen generator and a remote control mini blimp.
 
+## Python setup
+
+```
+# install python however you want, I use 3.10 on Ubuntu;
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt install python3.10-venv
+
+# venv
+python3.10 -m venv .venv
+source .venv/bin/activate
+
+# install required packages
+pip install -r requirements.txt
+```
+
 ## Hydrogen generator;
 Use electrolysis as our generation method. Further details in `/hydro`.
 
