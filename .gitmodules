@@ -1,0 +1,3 @@
+[submodule "simupy-flight"]
+	path = simupy-flight
+	url = https://github.com/nasa/simupy-flight.git

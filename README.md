@@ -14,6 +14,11 @@ source .venv/bin/activate
 
 # install required packages
 pip install -r requirements.txt
+
+# Install simupy;
+git submodule update --init --recursive
+cd simupy-flight/
+python -m pip install .
 ```
 
 ## Hydrogen generator;
