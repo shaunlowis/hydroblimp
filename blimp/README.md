@@ -1,8 +1,6 @@
 # Blimp
 Components and assembly of the RC blimp will be outlined here.
 
-A single motor, dual servo design is planned for use.
-
 ## Motor / ESC
 I got an EMAX RS2205 brushless motor, which is definitely overkill for this project.
 

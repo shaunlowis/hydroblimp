@@ -40,3 +40,6 @@ print(f"Vballoon = {v_balloon:.3f}m^3")
 # V = (4/3)*pi*r^3 => r = (((3/4) * V) / pi)^(1/3)
 d_balloon = np.cbrt(((3 / 4) * v_balloon) / np.pi)
 print(f"Balloon diameter = {d_balloon:.3f}m")
+
+
+# TODO: Max height calc, then some scaling to make model.

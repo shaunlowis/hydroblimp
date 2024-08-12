@@ -1,5 +1,5 @@
 # Overview
-Some design considerations:
+For now will just use Helium as lifting gas, hydrogen generation postponed.
 
 ## Anodes/Cathodes
 Was originally going to use AA battery cores for anodes and cathodes,
