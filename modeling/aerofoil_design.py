@@ -11,12 +11,6 @@ import aerosandbox.numpy as np
 import matplotlib.pyplot as plt
 import aerosandbox.tools.pretty_plots as p
 
-# aero = nf.get_aero_from_airfoil(  # You can use AeroSandbox airfoils as an entry point
-#     airfoil=asb.Airfoil("naca0012"),  # any UIUC or NACA airfoil name works
-#     alpha=5,
-#     Re=5e6,
-# )
-
 af = asb.Airfoil("naca0012")
 
 re = np.geomspace(1e5, 1e7, 50)
