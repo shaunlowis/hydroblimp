@@ -91,6 +91,8 @@ vehicle = simupy_flight.Vehicle(
     d_l=0.0,
 )
 
+# vehicle.input_force_moment
+
 BD = BlockDiagram(planet, vehicle)
 BD.connect(planet, vehicle, inputs=np.arange(planet.dim_output))
 BD.connect(vehicle, planet, inputs=np.arange(vehicle.dim_output))
@@ -132,75 +134,36 @@ with benchmark() as b:
 # Output is ordered by simulation setup, so Planet dims then Vehicle dims
 all_cols = planet.output_column_names_latex + vehicle.output_column_names_latex
 
-# We want to make a subplot of the following:
-# V_T (true air speed) [22]
-# Wind, W_N, W_E, W_D [31:34]
+# Pretty sure gravity is one of q1-q3, [34+4:34+6], check which one is linear/constant on plot
+# q_0_idx = 3
+# q_1_idx = 4
+# q_2_idx = 5
+# q_3_idx = 6
 
 fig, ax = plt.subplots(2, 1, figsize=(8, 6), constrained_layout=True, sharex=True)
 
 ax[0].grid(which="major", linestyle="--", linewidth=0.5)
 ax[1].grid(which="major", linestyle="--", linewidth=0.5)
 
-ax[0].plot(
-    res.t, res.y[:, 22], label=f"True air speed, {all_cols[22]}"
-)  # V_T (true air speed) [22]
-ax[0].plot(res.t, res.y[:, 15], label=f"Altitude {all_cols[15]}")  # h (altitude) [15]
+ax[0].plot(res.t, res.y[:, 3:6], label=f"Vehicle forces, {all_cols[3:6]}")  # q1-q3
+ax[1].plot(res.t, res.y[:, 15], label=f"Altitude {all_cols[15]}")  # h (altitude) [15]
 
-for i, wind_dir in enumerate(all_cols[31:34]):
-    ax[1].plot(
-        res.t, res.y[:, i], label=f"Wind {wind_dir}"
-    )  # Wind, W_N, W_E, W_D [31:34]
+print("Mass of sphere is: ", m)
+print(
+    "mean values of q0, 1, 2, 3: ",
+    np.mean(res.y[:, 3]),
+    np.mean(res.y[:, 4]),
+    np.mean(res.y[:, 5]),
+    np.mean(res.y[:, 6]),
+)
 
-ax[0].set_title("True air speed, altitude vs. time")
-ax[1].set_title("Wind speed, altitude vs. time")
-
-ax[0].legend()
-ax[1].legend()
-
-fig.supxlabel("Simulation time [s]")
-
-plt.savefig("report_plots/case_4.pdf")
-
-# Extending the simulation time, useful for buoyancy check.
-
-DEFAULT_INTEGRATOR_OPTIONS = {
-    "name": "dopri5",
-    "rtol": 1e-6,
-    "atol": 1e-12,
-    "nsteps": 500,
-    "max_step": 0.0,
-}
-
-with benchmark() as b:
-    res = BD.simulate(300, integrator_options=DEFAULT_INTEGRATOR_OPTIONS)
-
-# plot_nesc_comparisons(res, "04")
-
-# We want to make a subplot of the following:
-# V_T (true air speed) [22]
-# Wind, W_N, W_E, W_D [31:34]
-
-fig, ax = plt.subplots(2, 1, figsize=(8, 6), constrained_layout=True, sharex=True)
-
-ax[0].grid(which="major", linestyle="--", linewidth=0.5)
-ax[1].grid(which="major", linestyle="--", linewidth=0.5)
-
-ax[0].plot(
-    res.t, res.y[:, 22], label=f"True air speed, {all_cols[22]}"
-)  # V_T (true air speed) [22]
-ax[0].plot(res.t, res.y[:, 15], label=f"Altitude {all_cols[15]}")  # h (altitude) [15]
-
-for i, wind_dir in enumerate(all_cols[31:34]):
-    ax[1].plot(
-        res.t, res.y[:, i], label=f"Wind {wind_dir}"
-    )  # Wind, W_N, W_E, W_D [31:34]
-
-ax[0].set_title("True air speed, altitude vs. time")
-ax[1].set_title("Wind speed, altitude vs. time")
+# ax[0].set_title("True air speed, altitude vs. time")
+# ax[1].set_title("Wind speed, altitude vs. time")
 
 ax[0].legend()
 ax[1].legend()
 
 fig.supxlabel("Simulation time [s]")
 
-plt.savefig("report_plots/case_4_extended.pdf")
+plt.show()
+# plt.savefig("report_plots/case_4_neutral.pdf")
