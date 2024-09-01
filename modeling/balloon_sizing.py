@@ -1,7 +1,7 @@
 import numpy as np
 
+# Sea level gravity
 g = 9.8066
-
 
 # at sea level:
 rho_atm = 1.225  # kg/m^3
@@ -28,10 +28,14 @@ total_mass = sum(
         (2 / 1000),
         # Motor ESC
         (6.9 / 1000),
-        # Add 3d print when sliced
-        0,
-        # TODO: Add in the weight of the balloon:
-        # https://pml.nist.gov/cgi-bin/Star/compos.pl?matno=222
+        # 3-D printed parts, output from Prusa Slicer
+        # Aerofoil
+        17,
+        # Add in gondola when done.
+        # Density of mylar is: 1400 kg/m3, from https://pml.nist.gov/cgi-bin/Star/compos.pl?matno=222
+        # use a mylar thickness of 1 micron
+        # Approximating a sphere; 4pi/3*(r2-r1)*rho_mylar
+        1400 * ((4 * np.pi) / 3) * (1 * 10**-6),
     ]
 )
 
@@ -45,7 +49,14 @@ print(f"Vballoon = {v_balloon:.3f}m^3")
 print(f"Vballoon, tropopause = {v_balloon_tropopause:.3f}m^3")
 
 # V = (4/3)*pi*r^3 => r = (((3/4) * V) / pi)^(1/3)
-d_balloon = 2 * np.cbrt(((3 / 4) * v_balloon) / np.pi)
-d_balloon_tropopause = 2 * np.cbrt(((3 / 4) * v_balloon_tropopause) / np.pi)
-print(f"Balloon diameter = {d_balloon:.3f}m")
-print(f"Balloon diameter, tropopause = {d_balloon_tropopause:.3f}m")
+r_balloon = np.cbrt(((3 / 4) * v_balloon) / np.pi)
+r_balloon_tropopause = np.cbrt(((3 / 4) * v_balloon_tropopause) / np.pi)
+print(f"Balloon r = {r_balloon:.3f}m")
+print(f"Balloon r, tropopause = {r_balloon_tropopause:.3f}m")
+
+# Finding a, c for ellipsoid, where V = 4/3*pi*a^2*b
+# a and b are cords, shown in a diagram for this assignment.
+# Taking the tropopause radius and volume, we set a = 0.6, then solve for b:
+# TODO: Check this
+c = (1.384) / ((4 / 3) * (0.6**2))
+print(f"Dimensions are: \na=0.4m\nV=1.384m^3\nc={c:.3f}m")
