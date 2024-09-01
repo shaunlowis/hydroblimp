@@ -69,8 +69,26 @@ b_l = 1.0
 c_l = 1.0
 a_l = b_l
 
+# Height for initial conditions
+h_ic = 30_000 / ft_per_m
+R = 6371 * 1000
+g_0 = 9.807  # gravity at sea level
+
+g_ic = g_0 * ((R / (R + h_ic)) ** 2)
+
+# Add in buoyancy force.
 vehicle = simupy_flight.Vehicle(
     base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.1),
+    input_force_moment=np.array(
+        [
+            0.0,  # FX
+            0.0,  # FY
+            -m * g_ic,  # FZ
+            0.0,  # MX
+            0.0,  # MY
+            0.0,  # MZ
+        ]
+    ),
     m=m,
     I_xx=Ixx,
     I_yy=Iyy,
@@ -91,7 +109,9 @@ vehicle = simupy_flight.Vehicle(
     d_l=0.0,
 )
 
-# vehicle.input_force_moment
+# Now add buoyancy force, can't just use g=9.81 as the gravity model is complex:
+# gravity_model(p_x,p_y,p_z).ravel()
+# This is callable as a method though:
 
 BD = BlockDiagram(planet, vehicle)
 BD.connect(planet, vehicle, inputs=np.arange(planet.dim_output))
@@ -99,9 +119,6 @@ BD.connect(vehicle, planet, inputs=np.arange(vehicle.dim_output))
 
 lat_ic = 0.0 * np.pi / 180
 long_ic = 0.0 * np.pi / 180
-h_ic = 30_000 / ft_per_m
-
-print(f"Height in feet: {h_ic}")
 
 V_N_ic = 0.0
 V_E_ic = 0.0
@@ -111,14 +128,19 @@ psi_ic = 0.0 * np.pi / 180
 theta_ic = 0.0 * np.pi / 180
 phi_ic = 0.0 * np.pi / 180
 
-omega_X_ic = 10.0 * np.pi / 180
-omega_Y_ic = 20.0 * np.pi / 180
-omega_Z_ic = 30.0 * np.pi / 180
+# omega_X_ic = 10.0 * np.pi / 180
+# omega_Y_ic = 20.0 * np.pi / 180
+# omega_Z_ic = 30.0 * np.pi / 180
+
+omega_X_ic = 0.0 * np.pi / 180
+omega_Y_ic = 0.0 * np.pi / 180
+omega_Z_ic = 0.0 * np.pi / 180
 
 planet.initial_condition = planet.ic_from_planetodetic(
     long_ic, lat_ic, h_ic, V_N_ic, V_E_ic, V_D_ic, psi_ic, theta_ic, phi_ic
 )
 planet.initial_condition[-3:] = omega_X_ic, omega_Y_ic, omega_Z_ic
+
 
 DEFAULT_INTEGRATOR_OPTIONS = {
     "name": "dopri5",
@@ -129,41 +151,191 @@ DEFAULT_INTEGRATOR_OPTIONS = {
 }
 
 with benchmark() as b:
-    res = BD.simulate(44, integrator_options=DEFAULT_INTEGRATOR_OPTIONS)
+    res_fine_gravity = BD.simulate(300, integrator_options=DEFAULT_INTEGRATOR_OPTIONS)
+
+# NOW WITH NAIVE GRAVITY
+# Add in buoyancy force.
+vehicle = simupy_flight.Vehicle(
+    base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.1),
+    input_force_moment=np.array(
+        [
+            0.0,  # FX
+            0.0,  # FY
+            -m * 9.81,  # FZ
+            0.0,  # MX
+            0.0,  # MY
+            0.0,  # MZ
+        ]
+    ),
+    m=m,
+    I_xx=Ixx,
+    I_yy=Iyy,
+    I_zz=Izz,
+    I_xy=Ixy,
+    I_yz=Iyz,
+    I_xz=Izx,
+    x_com=x,
+    y_com=y,
+    z_com=z,
+    x_mrc=x,
+    y_mrc=y,
+    z_mrc=z,
+    S_A=S_A,
+    a_l=a_l,
+    b_l=b_l,
+    c_l=c_l,
+    d_l=0.0,
+)
+
+# Now add buoyancy force, can't just use g=9.81 as the gravity model is complex:
+# gravity_model(p_x,p_y,p_z).ravel()
+# This is callable as a method though:
+
+BD = BlockDiagram(planet, vehicle)
+BD.connect(planet, vehicle, inputs=np.arange(planet.dim_output))
+BD.connect(vehicle, planet, inputs=np.arange(vehicle.dim_output))
+
+lat_ic = 0.0 * np.pi / 180
+long_ic = 0.0 * np.pi / 180
+
+V_N_ic = 0.0
+V_E_ic = 0.0
+V_D_ic = 0.0
+
+psi_ic = 0.0 * np.pi / 180
+theta_ic = 0.0 * np.pi / 180
+phi_ic = 0.0 * np.pi / 180
+
+# omega_X_ic = 10.0 * np.pi / 180
+# omega_Y_ic = 20.0 * np.pi / 180
+# omega_Z_ic = 30.0 * np.pi / 180
+
+omega_X_ic = 0.0 * np.pi / 180
+omega_Y_ic = 0.0 * np.pi / 180
+omega_Z_ic = 0.0 * np.pi / 180
+
+planet.initial_condition = planet.ic_from_planetodetic(
+    long_ic, lat_ic, h_ic, V_N_ic, V_E_ic, V_D_ic, psi_ic, theta_ic, phi_ic
+)
+planet.initial_condition[-3:] = omega_X_ic, omega_Y_ic, omega_Z_ic
+
+
+DEFAULT_INTEGRATOR_OPTIONS = {
+    "name": "dopri5",
+    "rtol": 1e-6,
+    "atol": 1e-12,
+    "nsteps": 500,
+    "max_step": 0.0,
+}
+
+averaged_g = (9.81 + g_ic) / 2
+
+with benchmark() as b:
+    res = BD.simulate(300, integrator_options=DEFAULT_INTEGRATOR_OPTIONS)
+
+# NOW WITH NAIVE GRAVITY
+# Add in buoyancy force.
+vehicle = simupy_flight.Vehicle(
+    base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.1),
+    input_force_moment=np.array(
+        [
+            0.0,  # FX
+            0.0,  # FY
+            -m * averaged_g,  # FZ
+            0.0,  # MX
+            0.0,  # MY
+            0.0,  # MZ
+        ]
+    ),
+    m=m,
+    I_xx=Ixx,
+    I_yy=Iyy,
+    I_zz=Izz,
+    I_xy=Ixy,
+    I_yz=Iyz,
+    I_xz=Izx,
+    x_com=x,
+    y_com=y,
+    z_com=z,
+    x_mrc=x,
+    y_mrc=y,
+    z_mrc=z,
+    S_A=S_A,
+    a_l=a_l,
+    b_l=b_l,
+    c_l=c_l,
+    d_l=0.0,
+)
+
+# Now add buoyancy force, can't just use g=9.81 as the gravity model is complex:
+# gravity_model(p_x,p_y,p_z).ravel()
+# This is callable as a method though:
+
+BD = BlockDiagram(planet, vehicle)
+BD.connect(planet, vehicle, inputs=np.arange(planet.dim_output))
+BD.connect(vehicle, planet, inputs=np.arange(vehicle.dim_output))
+
+lat_ic = 0.0 * np.pi / 180
+long_ic = 0.0 * np.pi / 180
+
+V_N_ic = 0.0
+V_E_ic = 0.0
+V_D_ic = 0.0
+
+psi_ic = 0.0 * np.pi / 180
+theta_ic = 0.0 * np.pi / 180
+phi_ic = 0.0 * np.pi / 180
+
+# omega_X_ic = 10.0 * np.pi / 180
+# omega_Y_ic = 20.0 * np.pi / 180
+# omega_Z_ic = 30.0 * np.pi / 180
+
+omega_X_ic = 0.0 * np.pi / 180
+omega_Y_ic = 0.0 * np.pi / 180
+omega_Z_ic = 0.0 * np.pi / 180
+
+planet.initial_condition = planet.ic_from_planetodetic(
+    long_ic, lat_ic, h_ic, V_N_ic, V_E_ic, V_D_ic, psi_ic, theta_ic, phi_ic
+)
+planet.initial_condition[-3:] = omega_X_ic, omega_Y_ic, omega_Z_ic
+
+
+DEFAULT_INTEGRATOR_OPTIONS = {
+    "name": "dopri5",
+    "rtol": 1e-6,
+    "atol": 1e-12,
+    "nsteps": 500,
+    "max_step": 0.0,
+}
+
+with benchmark() as b:
+    res_averaged_g = BD.simulate(300, integrator_options=DEFAULT_INTEGRATOR_OPTIONS)
 
 # Output is ordered by simulation setup, so Planet dims then Vehicle dims
 all_cols = planet.output_column_names_latex + vehicle.output_column_names_latex
 
-# Pretty sure gravity is one of q1-q3, [34+4:34+6], check which one is linear/constant on plot
-# q_0_idx = 3
-# q_1_idx = 4
-# q_2_idx = 5
-# q_3_idx = 6
+# Check our model roughly maintains buoyancy
 
-fig, ax = plt.subplots(2, 1, figsize=(8, 6), constrained_layout=True, sharex=True)
+fig, ax = plt.subplots(figsize=(8, 6), constrained_layout=True)
 
-ax[0].grid(which="major", linestyle="--", linewidth=0.5)
-ax[1].grid(which="major", linestyle="--", linewidth=0.5)
+ax.grid(which="major", linestyle="--", linewidth=0.5)
 
-ax[0].plot(res.t, res.y[:, 3:6], label=f"Vehicle forces, {all_cols[3:6]}")  # q1-q3
-ax[1].plot(res.t, res.y[:, 15], label=f"Altitude {all_cols[15]}")  # h (altitude) [15]
+ax.plot(
+    res.t, res.y[:, 15], label=f"Altitude {all_cols[15]}, g=9.81"
+)  # h (altitude) [15]
+ax.plot(
+    res_fine_gravity.t,
+    res_fine_gravity.y[:, 15],
+    label=f"Altitude {all_cols[15]}, g={g_ic:.3f}",
+)  # h (altitude) [15]
+ax.plot(
+    res_averaged_g.t,
+    res_averaged_g.y[:, 15],
+    label=f"Altitude {all_cols[15]}, g={averaged_g:.3f}",
+)  # h (altitude) [15]
 
-print("Mass of sphere is: ", m)
-print(
-    "mean values of q0, 1, 2, 3: ",
-    np.mean(res.y[:, 3]),
-    np.mean(res.y[:, 4]),
-    np.mean(res.y[:, 5]),
-    np.mean(res.y[:, 6]),
-)
-
-# ax[0].set_title("True air speed, altitude vs. time")
-# ax[1].set_title("Wind speed, altitude vs. time")
-
-ax[0].legend()
-ax[1].legend()
-
+ax.set_title("Altitude vs. time")
+ax.legend()
 fig.supxlabel("Simulation time [s]")
 
-plt.show()
-# plt.savefig("report_plots/case_4_neutral.pdf")
+plt.savefig("modeling/report_plots/case_4_neutral_buoyancy.pdf")

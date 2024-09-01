@@ -159,7 +159,7 @@ ax[1].legend()
 
 fig.supxlabel("Simulation time [s]")
 
-plt.savefig("report_plots/case_4.pdf")
+plt.savefig("modeling/report_plots/case_4.pdf")
 
 # Extending the simulation time, useful for buoyancy check.
 
@@ -203,4 +203,4 @@ ax[1].legend()
 
 fig.supxlabel("Simulation time [s]")
 
-plt.savefig("report_plots/case_4_extended.pdf")
+plt.savefig("modeling/report_plots/case_4_extended.pdf")
