@@ -41,24 +41,51 @@ planet = simupy_flight.Planet(
     ),
 )
 
+
+# Inertia tensor is:
+#   I = M/5 * (
+#               b^2+c^2    0       0
+#                  0    a^2+c^2    0
+#                  0       0    a^2+b^2
+#             )
+# We have a = c = 0.4 and b = 2.749 [m], M = 0.06836 [kg]
+
+# This gives:
+#   I = M/5 * (
+#               b^2+a^2    0       0
+#                  0      2a^2     0
+#                  0       0    a^2+b^2
+#             )
+#     = 0.06836/5 * (
+#               2.749^2+0.4^2    0       0
+#                  0      2*0.4^2     0
+#                  0       0    0.4^2+2.749^2
+#             )
+
+# This gives:
+#   I = (
+#        0.1055     0       0
+#           0    0.00438    0
+#           0       0     0.1055
+#       )
+
 # Units are kg/m^2
-# Vehicle has lateral symmetry
-Ixx = 3.6
-Iyy = 3.6
-Izz = 3.6
+Ixx = 0.1055
+Iyy = 0.00438
+Izz = 0.1055
 Ixy = 0.0
 Iyz = 0.0
 Izx = 0.0
-m = 1.0
+m = 0.06836
 
 # Stay the same
 x = 0.0
 y = 0.0
 z = 0.0
 
-S_A = 0.1963495 / (ft_per_m**2)
-b_l = 1.0
-c_l = 1.0
+S_A = 1.503
+b_l = 1.226
+c_l = 1.226
 a_l = b_l
 
 # Height for initial conditions
