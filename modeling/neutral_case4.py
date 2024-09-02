@@ -78,17 +78,8 @@ g_ic = g_0 * ((R / (R + h_ic)) ** 2)
 
 # Add in buoyancy force.
 vehicle = simupy_flight.Vehicle(
-    base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.1),
-    input_force_moment=np.array(
-        [
-            0.0,  # FX
-            0.0,  # FY
-            -m * g_ic,  # FZ
-            0.0,  # MX
-            0.0,  # MY
-            0.0,  # MZ
-        ]
-    ),
+    base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.068386),
+    input_force_moment=simupy_flight.get_constant_force_moments(FZ=-m * g_ic),
     m=m,
     I_xx=Ixx,
     I_yy=Iyy,
@@ -156,17 +147,8 @@ with benchmark() as b:
 # NOW WITH NAIVE GRAVITY
 # Add in buoyancy force.
 vehicle = simupy_flight.Vehicle(
-    base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.1),
-    input_force_moment=np.array(
-        [
-            0.0,  # FX
-            0.0,  # FY
-            -m * 9.81,  # FZ
-            0.0,  # MX
-            0.0,  # MY
-            0.0,  # MZ
-        ]
-    ),
+    base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.068386),
+    input_force_moment=simupy_flight.get_constant_force_moments(FZ=-m * 9.81),
     m=m,
     I_xx=Ixx,
     I_yy=Iyy,
@@ -236,17 +218,8 @@ with benchmark() as b:
 # NOW WITH NAIVE GRAVITY
 # Add in buoyancy force.
 vehicle = simupy_flight.Vehicle(
-    base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.1),
-    input_force_moment=np.array(
-        [
-            0.0,  # FX
-            0.0,  # FY
-            -m * averaged_g,  # FZ
-            0.0,  # MX
-            0.0,  # MY
-            0.0,  # MZ
-        ]
-    ),
+    base_aero_coeffs=simupy_flight.get_constant_aero(CD_b=0.068386),
+    input_force_moment=simupy_flight.get_constant_force_moments(FZ=-m * averaged_g),
     m=m,
     I_xx=Ixx,
     I_yy=Iyy,

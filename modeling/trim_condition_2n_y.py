@@ -96,9 +96,10 @@ y = 0.0
 z = 0.0
 
 S_A = 1.503
+a_l = 1.226
 b_l = 1.226
 c_l = 1.226
-a_l = b_l
+d_l = 1.226
 
 # Height for initial conditions
 h_ic = 30_000 / ft_per_m
@@ -114,31 +115,12 @@ g_avg = (g_ic + 9.81) / 2
 vehicle = simupy_flight.Vehicle(
     base_aero_coeffs=simupy_flight.get_constant_aero(
         CD_b=0.068386,
+        # CL_b=0.0,
         CL_b=0.6111,
     ),
-    #     get_constant_force_moments(
-    #     FX=0.0,
-    #     FY=0.0,
-    #     FZ=0.0,
-    #     MX=0.0,
-    #     MY=0.0,
-    #     MZ=0.0,
-    # ):
-    #     """
-    #     Generate a force and moment callback that returns a constant and specified set of
-    #     forces and moments regardless of flight condition.
-    #     """
-    input_force_moment=np.array(
-        [
-            0.0,  # FX
-            0.0,
-            # 2.0,  # FY, applied small thrust.
-            # -m * g_avg,  # FZ, buoyancy force
-            0.0,
-            0.0,  # MX
-            0.0,  # MY
-            0.0,  # MZ
-        ]
+    input_force_moment=simupy_flight.get_constant_force_moments(
+        # FZ=-m * g_avg
+        FY=2
     ),
     m=m,
     I_xx=Ixx,
@@ -157,7 +139,7 @@ vehicle = simupy_flight.Vehicle(
     a_l=a_l,
     b_l=b_l,
     c_l=c_l,
-    d_l=0.0,
+    d_l=d_l,
 )
 
 BD = BlockDiagram(planet, vehicle)
@@ -194,7 +176,7 @@ DEFAULT_INTEGRATOR_OPTIONS = {
 }
 
 with benchmark() as b:
-    res = BD.simulate(20, integrator_options=DEFAULT_INTEGRATOR_OPTIONS)
+    res = BD.simulate(90, integrator_options=DEFAULT_INTEGRATOR_OPTIONS)
 
 # Output is ordered by simulation setup, so Planet dims then Vehicle dims
 all_cols = planet.output_column_names_latex + vehicle.output_column_names_latex
@@ -205,7 +187,7 @@ fig, ax = plt.subplots(3, 2, figsize=(8, 6), constrained_layout=True, sharex=Tru
 # Euler angles:
 ax[0][0].set_title("Euler angles")
 for i, euler_angle in enumerate(all_cols[16:19]):
-    ax[0][0].plot(res.t, res.y[:, i], label=f"{euler_angle} [NED]")
+    ax[0][0].plot(res.t, res.y[:, i + 16], label=f"{all_cols[i + 16]} [NED]")
 
 # Translational acceleration:
 ax[1][0].set_title("True air speed")
@@ -220,17 +202,17 @@ ax[2][0].plot(res.t, res.y[:, 15], label=all_cols[15])
 # Transational acceleration of vehicle
 ax[0][1].set_title("Translational acceleration of vehicle")
 for l, accel_out in enumerate(all_cols[34:37]):
-    ax[0][1].plot(res.t, res.y[:, l], label=f"{accel_out} [FRD]")
-    print(f"{accel_out} = {res.y[:, l].mean():.3g}")
+    ax[0][1].plot(res.t, res.y[:, l + 34], label=f"{accel_out} [FRD]")
+    print(f"{accel_out} = {res.y[:, l + 34].mean():.3g}")
 
 ax[1][1].set_title("Angular acceleration of vehicle")
 for m, angles_out in enumerate(all_cols[37:]):
-    ax[1][1].plot(res.t, res.y[:, m], label=f"{angles_out}")
-    print(f"{angles_out} = {res.y[:, m].mean():.3g}")
+    ax[1][1].plot(res.t, res.y[:, m + 37], label=f"{angles_out}")
+    print(f"{angles_out} = {res.y[:, m +37].mean():.3g}")
 
 ax[2][1].set_title("Momenta of vehicle")
 for n, momenta in enumerate(all_cols[:3]):
-    ax[2][1].plot(res.t, res.y[:, n], label=f"{momenta}")
+    ax[2][1].plot(res.t, res.y[:, n + 3], label=f"{momenta}")
     print(f"{momenta} = {res.y[:, n].mean():.3g}")
 
 for sub_ax in fig.axes:

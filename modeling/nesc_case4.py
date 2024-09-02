@@ -148,7 +148,7 @@ ax[0].plot(res.t, res.y[:, 15], label=f"Altitude {all_cols[15]}")  # h (altitude
 
 for i, wind_dir in enumerate(all_cols[31:34]):
     ax[1].plot(
-        res.t, res.y[:, i], label=f"Wind {wind_dir}"
+        res.t, res.y[:, i + 34], label=f"Wind {wind_dir}"
     )  # Wind, W_N, W_E, W_D [31:34]
 
 ax[0].set_title("True air speed, altitude vs. time")
@@ -195,8 +195,8 @@ for i, wind_dir in enumerate(all_cols[31:34]):
         res.t, res.y[:, i], label=f"Wind {wind_dir}"
     )  # Wind, W_N, W_E, W_D [31:34]
 
-ax[0].set_title("True air speed, altitude vs. time")
-ax[1].set_title("Wind speed, altitude vs. time")
+ax[0].set_title("True air speed, altitude")
+ax[1].set_title("Wind speed")
 
 ax[0].legend()
 ax[1].legend()
