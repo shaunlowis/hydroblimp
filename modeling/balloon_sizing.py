@@ -31,7 +31,8 @@ total_mass = sum(
         # 3-D printed parts, output from Prusa Slicer
         # Aerofoil & gondola
         (17 / 1000),
-        # Density of mylar is: 1400 kg/m3, from https://pml.nist.gov/cgi-bin/Star/compos.pl?matno=222
+        # Density of mylar is: 1400 kg/m3, from
+        # https://pml.nist.gov/cgi-bin/Star/compos.pl?matno=222
         # use a mylar thickness of 1 micron
         # Approximating a sphere; 4pi/3*(r2-r1)*rho_mylar
         1400 * ((4 * np.pi) / 3) * (1 * 10**-6),

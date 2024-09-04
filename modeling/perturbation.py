@@ -111,6 +111,12 @@ g_ic = g_0 * ((R / (R + h_ic)) ** 2)
 # See report for justification
 g_avg = (g_ic + 9.81) / 2
 
+
+# Callback function:
+def perturbation_force(*args):
+    return np.array([0.0, 2.0, 0.0, 0.0, 0.0, 0.0])
+
+
 # See report for derivations.
 vehicle = simupy_flight.Vehicle(
     base_aero_coeffs=simupy_flight.get_constant_aero(
@@ -118,10 +124,18 @@ vehicle = simupy_flight.Vehicle(
         # CL_b=0.0,
         CL_b=0.6111,
     ),
-    input_force_moment=simupy_flight.get_constant_force_moments(
-        # FZ=-m * g_avg
-        FY=2
-    ),
+    # Overload default input:
+    # input_force_moment=simupy_flight.get_constant_force_moments(
+    #     # FZ=-m * g_avg
+    #     # FY=2
+    #     FX=0,
+    #     FY=2,
+    #     FZ=0,
+    #     MX=0,
+    #     MY=0,
+    #     MZ=0,
+    # ),
+    input_force_moment=perturbation_force,
     m=m,
     I_xx=Ixx,
     I_yy=Iyy,
@@ -166,12 +180,15 @@ planet.initial_condition = planet.ic_from_planetodetic(
 )
 planet.initial_condition[-3:] = omega_X_ic, omega_Y_ic, omega_Z_ic
 
+# Adding initial condition directly:
+# vehicle.initial_condition[5] = np.array([2])
+
 
 DEFAULT_INTEGRATOR_OPTIONS = {
     "name": "dopri5",
     "rtol": 1e-6,
     "atol": 1e-12,
-    "nsteps": 5000,
+    "nsteps": 50000,
     "max_step": 0.0,
 }
 
@@ -220,6 +237,6 @@ for sub_ax in fig.axes:
     sub_ax.legend()
 
 fig.supxlabel("Simulation time [s]")
-fig.suptitle("Vehicle in trimmed flight, 2N thrust in +y")
+fig.suptitle("2N thrust in +y perturbation")
 
-plt.savefig("modeling/report_plots/trimmed_flight.pdf")
+plt.savefig("modeling/report_plots/perturbation.pdf")
