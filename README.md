@@ -3,6 +3,12 @@ Making a hydrogen generator and a remote control mini blimp.
 
 ## Blimp design
 
+<p align="middle">
+  <img src="report/airship_design.png" width="300" />
+  <img src="report/Cl-Cd-naca0012.jpg" width="300" /> 
+  <img src="report/electronics_weight.jpg" width="200" />
+</p>
+
 ### ENME 488 Flight Mechanics
 A 6 degrees of freedom model was constructed for a high altitude research blimp.
 The blimp was subjected to different external forces, representative of its operating point at ~30,000 ft.
