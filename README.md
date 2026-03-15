@@ -4,9 +4,9 @@ Making a hydrogen generator and a remote control mini blimp.
 ## Blimp design
 
 <p align="middle">
-  <img src="report/airship_design.png" width="300" />
-  <img src="report/Cl-Cd-naca0012.jpg" width="300" /> 
-  <img src="report/electronics_weight.jpg" width="200" />
+  <img src="report/tex_files/airship_design.png" width="300" />
+  <img src="report/tex_files/Cl-Cd-naca0012.jpg" width="300" /> 
+  <img src="report/tex_files/electronics_weight.jpg" width="200" />
 </p>
 
 ### ENME 488 Flight Mechanics
